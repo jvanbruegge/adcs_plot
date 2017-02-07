@@ -10,7 +10,7 @@ export interface GraphInfo {
     heading : string;
     yScaleText : string;
     yDomain : [number, number];
-    dataFilter : (d : WebsocketData) => number;
+    dataFilter : (d : WebsocketData) => number[];
 }
 
 export interface Scales {
@@ -27,27 +27,26 @@ export function createGraph(info : GraphInfo) : Component
         const scale$ : Stream<Scales> = xs.of({
             x: scaleTime()
                 .domain([new Date(), hoursAgo(2)])
-                .range([0, 500]), //TODO: Dynamic width
+                .range([0, 500]),
             y: scaleLinear()
                 .domain(info.yDomain)
-                .range([0, 400]) //TODO: Dynamic height
+                .range([0, 500])
         });
 
-        const scaledData$ : Stream<DataPoint[]> = xs.combine(scale$, state)
+        const scaledData$ : Stream<DataPoint[][]> = xs.combine(scale$, state)
             .map(([scales, arr]) => arr.map(data => {
                 const x : number = scales.x(data.time);
-                const y : number = scales.y(info.dataFilter(data));
-                return [x, y] as DataPoint;
+                return info.dataFilter(data).map(y => [x, y] as DataPoint);
             }));
 
-        const path$ : Stream<VNode> = scaledData$
-            .map<string>(arr => line<DataPoint>()(arr))
-            .map<VNode>(line => <path d={ line } />);
+        const path$ : Stream<VNode[]> = scaledData$
+            .map<string[]>(data => data.map(arr => line<DataPoint>()(arr)))
+            .map<VNode[]>(lines => lines.map(s => <path d={ s } />));
 
         const vdom$ : Stream<VNode> = path$
-            .map(path =>
-                <svg>
-                    { path }
+            .map(paths =>
+                <svg viewBox="0 0 500 500">
+                    { paths }
                 </svg>
             );
 

@@ -3,15 +3,16 @@ import { VNode } from '@cycle/dom';
 
 import { Sources, Sinks } from './interfaces';
 
+import { Graphs } from './graphs';
+
 export function App(sources : Sources) : Sinks
 {
     const { websocket } = sources;
-    const vdom$ : Stream<VNode> = xs.of(
-        <div>My Awesome Cycle.js app</div>
-    );
+
+    const graphs : Sinks = Graphs(sources);
 
     return {
-        DOM: vdom$
-        state: websocket;
+        ...graphs,
+        state: websocket
     };
 }
