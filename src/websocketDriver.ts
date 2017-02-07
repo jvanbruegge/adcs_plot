@@ -38,7 +38,8 @@ const testData : WebsocketData[] = [
    createRandomWebsocketData(), 
    createRandomWebsocketData(), 
    createRandomWebsocketData(), 
-   createRandomWebsocketData()
+   createRandomWebsocketData(),
+   { ...createRandomWebsocketData(), time: new Date() }
 ].slice(0).sort((a, b) => b.time.getTime() - a.time.getTime());
 
 export function makeWebsocketDriver(url : string) : () => Stream<WebsocketData>
@@ -60,16 +61,16 @@ export function makeWebsocketDriver(url : string) : () => Stream<WebsocketData>
 function createRandomWebsocketData() : WebsocketData
 {
     return {
-        time: new Date(new Date().getTime() - Math.random() * 1000 * 60 * 60 * 2),
+        time: new Date(new Date().getTime() - Math.random() * 1000 * 60 * 60 * 0.5),
         accel: randomVector(),
         gyro: randomVector(),
         magVector: randomVector(),
         sunVector: randomVector(),
         temp: {
-            bmx: Math.random() * 100,
-            t1: Math.random() * 100,
-            t2: Math.random() * 100,
-            t3: Math.random() * 100
+            bmx: Math.random(),
+            t1: Math.random(),
+            t2: Math.random(),
+            t3: Math.random()
         }
     };
 }
@@ -77,8 +78,8 @@ function createRandomWebsocketData() : WebsocketData
 function randomVector() : Vector
 {
     return {
-        x: Math.random() * 500,
-        y: Math.random() * 500,
-        z: Math.random() * 500
+        x: Math.random(),
+        y: Math.random(),
+        z: Math.random()
     };
 }
