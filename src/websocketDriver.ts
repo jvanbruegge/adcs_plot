@@ -71,6 +71,13 @@ function createRandomWebsocketData() : WebsocketData
             t1: Math.random(),
             t2: Math.random(),
             t3: Math.random()
+        },
+        magRaw: { ...randomVector(), r: Math.random() },
+        sunRaw: {
+            pad0: Math.random(),
+            pad1: Math.random(),
+            pad2: Math.random(),
+            pad3: Math.random()
         }
     };
 }

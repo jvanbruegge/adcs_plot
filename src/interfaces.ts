@@ -38,7 +38,10 @@ export interface MagRaw extends Vector {
 }
 
 export interface SunRaw {
-    pads : [number, number, number, number];
+    pad0 : number;
+    pad1 : number;
+    pad2 : number;
+    pad3 : number;
 }
 
 export interface WebsocketData {
@@ -48,6 +51,6 @@ export interface WebsocketData {
     magVector : Vector;
     sunVector : Vector;
     temp : Temperature;
-    magRaw? : MagRaw;
-    sunRaw? : SunRaw;
+    magRaw : MagRaw;
+    sunRaw : SunRaw;
 }
