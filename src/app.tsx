@@ -7,7 +7,7 @@ import { Graphs } from './graphs';
 
 export function App(sources : Sources) : Sinks
 {
-    const { websocket } = sources;
+    const { websocket } : Sources = sources;
 
     const graphs : Sinks = Graphs(sources);
 

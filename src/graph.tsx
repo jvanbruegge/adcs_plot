@@ -20,6 +20,13 @@ export interface Scales {
 
 export type DataPoint = [number, number];
 
+const colors : string[] = [
+    'red',
+    'green',
+    'blue',
+    'black'
+];
+
 export function createGraph(info : GraphInfo) : Component
 {
     return function({ state } : Sources) : Sinks
@@ -40,12 +47,23 @@ export function createGraph(info : GraphInfo) : Component
             }));
 
         const path$ : Stream<VNode[]> = scaledData$
+            .map<DataPoint[][]>(data => data.reduce((acc, curr) => {
+                const a : (i : number) => DataPoint[] = i => (acc[i] ? acc[i] : []) as DataPoint[];
+                return curr.map((p, i) => [...a(i), p]);
+            }, []))
             .map<string[]>(data => data.map(arr => line<DataPoint>()(arr)))
-            .map<VNode[]>(lines => lines.map(s => <path d={ s } />));
+            .map<VNode[]>(lines => lines.map((s, i) => {
+                return <path
+                    d={ s }
+                    stroke={ colors[i] }
+                    stroke-width='4'
+                    fill='none'
+                />;
+            }));
 
         const vdom$ : Stream<VNode> = path$
             .map(paths =>
-                <svg viewBox="0 0 500 500">
+                <svg viewBox='0 0 500 500'>
                     { paths }
                 </svg>
             );

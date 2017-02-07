@@ -9,7 +9,7 @@ export function Graphs(sources : Sources) : Sinks
     const tempSinks : Sinks = createGraph({
         heading: 'Temperature',
         yScaleText: 't in °C',
-        yDomain: [0, 100],
+        yDomain: [0, 1],
         dataFilter: data => Object.keys(data.temp).map(k => data.temp[k])
     })(sources);
 
