@@ -3,19 +3,19 @@ const ws = require('nodejs-websocket');
 process.stdin.resume();
 process.stdin.setEncoding('utf8');
 
-let connections = [];
+var connections = [];
 
-const server = ws.createServer(conn => {
+const server = ws.createServer(function(conn){
     console.log('New connection');
     connections.push(conn);
 
-    conn.on('close', () => {
+    conn.on('close', function() {
         connections.splice(connections.indexOf(conn), 1);
     });
-}).listen(3000);
+}).listen(4000);
 
 process.stdin.on('data', function(chunk) {
-    connections.forEach(conn => {
+    connections.forEach(function(conn) {
         conn.sendText(JSON.stringify(parseChunk(chunk)));
     });
 });
@@ -24,7 +24,8 @@ process.stdin.on('end', function() {
     console.log('input ended')
 });
 
-let start = 2;
+
+var start = 2;
 
 function parseChunk(chunk) {
     const res = {
@@ -72,6 +73,7 @@ function parseChunk(chunk) {
     return res;
 }
 
-function readValue(end, chunk, additional = 3) {
+function readValue(end, chunk, additional) {
+    additional = additional || 3;
     return parseFloat(chunk.substring(start + additional, (start = chunk.indexOf(end)) - 1));
 }

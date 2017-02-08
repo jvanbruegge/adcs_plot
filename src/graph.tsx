@@ -32,7 +32,7 @@ export function createGraph(info : GraphInfo) : Component
     {
         const scale$ : Stream<Scales> = state.map(data => ({
             x: scaleTime()
-                .domain([new Date(), hoursAgo(0.5)])
+                .domain([new Date(), hoursAgo(0.1)])
                 .range([0, 2000]),
             y: scaleLinear()
                 .domain(getDomain(data, info))

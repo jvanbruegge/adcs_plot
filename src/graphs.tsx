@@ -11,49 +11,42 @@ export function Graphs(sources : Sources) : Sinks
     const accelSinks : Sinks = createGraph({
         heading: 'Accelerometer',
         yScaleText: '',
-        yDomain: [0, 1],
         dataFilter: getDataFilter('accel')
     })(sources);
 
     const gyroSinks : Sinks = createGraph({
         heading: 'Gyroscope',
         yScaleText: '',
-        yDomain: [0, 1],
         dataFilter: getDataFilter('gyro')
     })(sources);
 
     const magVectorSinks : Sinks = createGraph({
         heading: 'Magnet Vector',
         yScaleText: '',
-        yDomain: [0, 1],
         dataFilter: getDataFilter('magVector')
     })(sources);
 
     const sunVectorSinks : Sinks = createGraph({
         heading: 'Sun Vector',
         yScaleText: '',
-        yDomain: [0, 1],
         dataFilter: getDataFilter('sunVector')
     })(sources);
 
     const tempSinks : Sinks = createGraph({
         heading: 'Temperature',
         yScaleText: 't in °C',
-        yDomain: [0, 1],
         dataFilter: getDataFilter('temp')
     })(sources);
 
     const magRawSinks : Sinks = createGraph({
         heading: 'Raw Magnet Values',
         yScaleText: '',
-        yDomain: [0, 1],
         dataFilter: getDataFilter('magRaw')
     })(sources);
 
     const sunRawSinks : Sinks = createGraph({
         heading: 'Raw Sun Values',
         yScaleText: '',
-        yDomain: [0, 1],
         dataFilter: getDataFilter('sunRaw')
     })(sources);
 
