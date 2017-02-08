@@ -15,13 +15,15 @@
     "cyclejs-utils": "^1.0.3",
     "d3-scale": "^1.0.4",
     "d3-shape": "^1.0.4",
+    "nodejs-websocket": "^1.7.1",
     "xstream": "^10.2.0"
   },
   "scripts": {
     "start": "cycle-scripts start",
     "test": "cycle-scripts test",
     "build": "cycle-scripts build",
-    "eject": "cycle-scripts eject"
+    "eject": "cycle-scripts eject",
+    "server": "node server/index.js"
   },
   "babel": {
     "presets": [

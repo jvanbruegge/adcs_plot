@@ -2,59 +2,24 @@ import xs, { Stream } from 'xstream';
 
 import { WebsocketData, Vector } from './interfaces';
 
-const testData : WebsocketData[] = [
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(), 
-   createRandomWebsocketData(),
-   { ...createRandomWebsocketData(), time: new Date() }
-].slice(0).sort((a, b) => b.time.getTime() - a.time.getTime());
-
 export function makeWebsocketDriver(url : string) : () => Stream<WebsocketData>
 {
-    //const websocket : WebSocket = new WebSocket(url);
+    const websocket : WebSocket = new WebSocket(url);
 
     return () => {
-        return xs.merge(/*xs.create({
+        return xs.create({
             start: listener => {
                 websocket.onmessage = (msg : MessageEvent) => listener.next(msg);
             },
             stop: () => {}
-        }) 
-        .map((msg : MessageEvent) => JSON.parse(msg.data)),*/
-            xs.fromArray(testData));
+        })
+        .map((msg : MessageEvent) => {
+            const json : any = JSON.parse(msg.data);
+            return {
+                ...json,
+                time: new Date(json.time)
+            };
+        });
     };
 }
 

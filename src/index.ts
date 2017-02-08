@@ -8,14 +8,15 @@ import { Component, WebsocketData, Sources, Sinks } from './interfaces';
 
 import { App } from './app';
 
-const url : string = window.location.href.split('/')[2];
+const url : string = window.location.href.split('/')[2].split(':')[0];
+console.log(url);
 
 const main : Component = addState(App);
 
 const drivers : any = {
     DOM: makeDOMDriver('#app'),
     HTTP: makeHTTPDriver(),
-    websocket: makeWebsocketDriver('ws://' + url + '/websocket')
+    websocket: makeWebsocketDriver('ws://' + url + ':3000')
 };
 
 run(main, drivers);
