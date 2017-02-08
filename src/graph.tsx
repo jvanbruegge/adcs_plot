@@ -9,7 +9,7 @@ import { Sources, Sinks, Component, WebsocketData } from './interfaces';
 export interface GraphInfo {
     heading : string;
     yScaleText : string;
-    dataFilter : (d : WebsocketData) => number[];
+    dataIndex : number[];
 }
 
 export interface Scales {
@@ -30,25 +30,22 @@ export function createGraph(info : GraphInfo) : Component
 {
     return function({ state } : Sources) : Sinks
     {
-        const scale$ : Stream<Scales> = state.map(data => ({
+        const scale$ : Stream<Scales> = state.map(s => ({
             x: scaleTime()
                 .domain([new Date(), hoursAgo(0.1)])
                 .range([0, 2000]),
             y: scaleLinear()
-                .domain(getDomain(data, info))
+                .domain(getDomain(s.domains, info.dataIndex))
                 .range([0, 400])
         }));
 
         const scaledData$ : Stream<DataPoint[][]> = xs.combine(scale$, state)
-            .map(([scales, arr]) => arr.map(data => {
-                const x : number = scales.x(data.time);
-                return info.dataFilter(data).map(v => [x, scales.y(v)] as DataPoint);
-            }));
+            .map(([scales, s]) => [scales, selectData(s.values, info.dataIndex)] as [Scales, [Date, number][][]])
+            .map(([scales, arr]) => {
+                return arr.map(data => data.map(d => [scales.x(d[0]), scales.y(d[1])] as [number, number]));
+            });
 
         const path$ : Stream<VNode[]> = scaledData$
-            .map<DataPoint[][]>(data => data.reduce((acc, curr) => {
-                return curr.map((p, i) => [...(acc[i] ? acc[i] : []), p]);
-            }, []))
             .map<string[]>(data => data.map(arr => line<DataPoint>()(arr)))
             .map<VNode[]>(lines => lines.map((s, i) => {
                 return <path
@@ -75,19 +72,20 @@ export function createGraph(info : GraphInfo) : Component
     };
 }
 
-function getDomain(data : WebsocketData[], info : GraphInfo) : [number, number]
+function selectData(datas : [Date, number][][], dataIndex : number[]) : [Date, number][][]
 {
-    const mins : number[] = data.map(arr => {
-        return info.dataFilter(arr).reduce((acc, curr) => curr < acc ? curr : acc, Infinity);
-    });
+    return datas.filter((d, i) => dataIndex.indexOf(i) !== -1);
+}
 
-    const maxs : number[] = data.map(arr => {
-        return info.dataFilter(arr).reduce((acc, curr) => curr > acc ? curr : acc, -Infinity);
-    });
-
-    const min : number = mins.reduce((acc, curr) => curr < acc ? curr : acc, Infinity);
-    const max : number = maxs.reduce((acc, curr) => curr > acc ? curr : acc, -Infinity);
-    return min !== max ? [min, max] : [min - 1, max + 1];
+function getDomain(domains : [number, number][], dataIndex : number[]) : [number, number]
+{
+    return domains
+        .filter((d, i) => dataIndex.indexOf(i) !== -1)
+        .reduce((acc, curr) => {
+            const min : number = Math.min(curr[0], acc[0]);
+            const max : number = Math.max(curr[1], acc[1]);
+            return [min, max];
+        }, [Infinity, -Infinity]);
 }
 
 function hoursAgo(count : number) : Date

@@ -8,7 +8,7 @@ export interface Sources
     DOM : DOMSource;
     HTTP : HTTPSource;
     websocket : Stream<WebsocketData>;
-    state : Stream<WebsocketData[]>;
+    state : Stream<State>;
 }
 
 export interface Sinks
@@ -53,4 +53,9 @@ export interface WebsocketData {
     temp : Temperature;
     magRaw : MagRaw;
     sunRaw : SunRaw;
+}
+
+export interface State {
+    domains: [number, number][];
+    values: [Date, number][][];
 }
