@@ -59,7 +59,7 @@ export function createGraph(info : GraphInfo) : Component
             .map<VNode[]>(lines => lines.map((s, i) => {
                 return svg.path({
                     attrs: {
-                        d: s,
+                        d: s ? s : '',
                         stroke: colors[i]
                     },
                     class: {
@@ -70,7 +70,7 @@ export function createGraph(info : GraphInfo) : Component
             }));
 
         const vdom$ : Stream<VNode> = path$
-            .map(paths =>
+            .map(paths => {
                 return svg({
                     attrs: {
                         viewBox: '0 0 2000 400',
@@ -81,7 +81,7 @@ export function createGraph(info : GraphInfo) : Component
                     },
                     key: info.heading
                 }, paths);
-            );
+            });
 
         return {
             DOM: vdom$
