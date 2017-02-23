@@ -2,6 +2,7 @@ import xs, { Stream } from 'xstream';
 import { run } from '@cycle/xstream-run';
 import { makeDOMDriver } from '@cycle/dom';
 import { makeHTTPDriver } from '@cycle/http';
+import { timeDriver } from '@cycle/time';
 
 import { makeWebsocketDriver } from './websocketDriver';
 import { Component, WebsocketData, Sources, Sinks, State } from './interfaces';
@@ -9,7 +10,7 @@ import { Component, WebsocketData, Sources, Sinks, State } from './interfaces';
 import { App } from './app';
 
 //const url : string = window.location.href.split('/')[2].split(':')[0];
-const url : string = '192.168.0.3';
+const url : string = '192.168.0.4';
 console.log(url);
 
 const main : Component = addState(App);
@@ -17,6 +18,7 @@ const main : Component = addState(App);
 const drivers : any = {
     DOM: makeDOMDriver('#app'),
     HTTP: makeHTTPDriver(),
+    Time: timeDriver,
     websocket: makeWebsocketDriver('ws://' + url + ':4000')
 };
 

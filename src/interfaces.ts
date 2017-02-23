@@ -9,6 +9,7 @@ export interface Sources
     HTTP : HTTPSource;
     websocket : Stream<WebsocketData>;
     state : Stream<State>;
+    Time : any;
 }
 
 export interface Sinks

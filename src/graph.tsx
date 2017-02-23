@@ -1,10 +1,11 @@
 /** @jsx snabb.svg */
 import xs, { Stream } from 'xstream';
+import sampleCombine from 'xstream/extra/sampleCombine';
 import { scaleTime, scaleLinear, ScaleLinear, ScaleTime } from 'd3-scale';
 import { line, Line } from 'd3-shape';
 import { VNode } from '@cycle/dom';
 
-import { Sources, Sinks, Component, WebsocketData } from './interfaces';
+import { Sources, Sinks, State, Component, WebsocketData } from './interfaces';
 
 export interface GraphInfo {
     heading : string;
@@ -15,6 +16,7 @@ export interface GraphInfo {
 export interface Scales {
     x : ScaleTime<number, number>;
     y : ScaleLinear<number, number>;
+    state? : State;
 }
 
 export type DataPoint = [number, number];
@@ -28,19 +30,26 @@ const colors : string[] = [
 
 export function createGraph(info : GraphInfo) : Component
 {
-    return function({ state } : Sources) : Sinks
+    return function({ state, Time } : Sources) : Sinks
     {
-        const scale$ : Stream<Scales> = state.map(s => ({
-            x: scaleTime()
-                .domain([new Date(), hoursAgo(0.1)])
-                .range([0, 2000]),
-            y: scaleLinear()
-                .domain(getDomain(s.domains, info.dataIndex))
-                .range([0, 400])
-        }));
+        const updateDOM$ : Stream<undefined> = Time.periodic(500)
+            .mapTo(undefined);
 
-        const scaledData$ : Stream<DataPoint[][]> = xs.combine(scale$, state)
-            .map(([scales, s]) => [scales, selectData(s.values, info.dataIndex)] as [Scales, [Date, number][][]])
+        const scale$ : Stream<Scales> = updateDOM$
+            .compose(sampleCombine(state))
+            .map(([_, s]) => s)
+            .map(s => ({
+                x: scaleTime()
+                    .domain([secondsAgo(1), hoursAgo(0.1)])
+                    .range([0, 2000]),
+                y: scaleLinear()
+                    .domain(getDomain(s.domains, info.dataIndex))
+                    .range([0, 400]),
+                state: s
+            }));
+
+        const scaledData$ : Stream<DataPoint[][]> = scale$
+            .map(scales => [scales, selectData(scales.state.values, info.dataIndex)] as [Scales, [Date, number][][]])
             .map(([scales, arr]) => {
                 return arr.map(data => data.map(d => [scales.x(d[0]), scales.y(d[1])] as [number, number]));
             });
@@ -92,5 +101,12 @@ function hoursAgo(count : number) : Date
 {
     return new Date(
         new Date().getTime() - 1000 * 60 * 60 * count
+    );
+}
+
+function secondsAgo(count : number) : Date
+{
+    return new Date(
+        new Date().getTime() - 1000 * count
     );
 }

@@ -11,6 +11,7 @@
     "@cycle/dom": "^14.3.0",
     "@cycle/http": "^11.3.0",
     "@cycle/isolate": "^1.4.0",
+    "@cycle/time": "^0.7.1",
     "@cycle/xstream-run": "^4.2.0",
     "cyclejs-utils": "^1.0.3",
     "d3-scale": "^1.0.4",

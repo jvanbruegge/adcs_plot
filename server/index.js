@@ -10,13 +10,17 @@ const server = ws.createServer(function(conn){
     connections.push(conn);
 
     conn.on('close', function() {
-        connections.splice(connections.indexOf(conn), 1);
+        kickUser(conn);
     });
 }).listen(4000);
 
 process.stdin.on('data', function(chunk) {
     connections.forEach(function(conn) {
-        conn.sendText(JSON.stringify(parseChunk(chunk)));
+        try {
+            conn.sendText(JSON.stringify(parseChunk(chunk)));
+        } catch(e) {
+            kickUser(conn);
+        }
     });
 });
 
@@ -24,8 +28,12 @@ process.stdin.on('end', function() {
     console.log('input ended')
 });
 
+function kickUser(conn) {
+    console.log('Removed connection');
+    connections.splice(connections.indexOf(conn), 1);
+}
 
-var start = 2;
+var start = 7;
 
 function parseChunk(chunk) {
     const res = {
