@@ -3,7 +3,7 @@ import xs, { Stream } from 'xstream';
 import sampleCombine from 'xstream/extra/sampleCombine';
 import { scaleTime, scaleLinear, ScaleLinear, ScaleTime } from 'd3-scale';
 import { line, Line } from 'd3-shape';
-import { VNode } from '@cycle/dom';
+import { VNode, svg } from '@cycle/dom';
 
 import { Sources, Sinks, State, Component, WebsocketData } from './interfaces';
 
@@ -57,22 +57,30 @@ export function createGraph(info : GraphInfo) : Component
         const path$ : Stream<VNode[]> = scaledData$
             .map<string[]>(data => data.map(arr => line<DataPoint>()(arr)))
             .map<VNode[]>(lines => lines.map((s, i) => {
-                return <path
-                    d={ s }
-                    stroke={ colors[i] }
-                    class-path={ true }
-                />;
+                return svg.path({
+                    attrs: {
+                        d: s,
+                        stroke: colors[i]
+                    },
+                    class: {
+                        path: true
+                    },
+                    key: 'line' + i
+                }, []);
             }));
 
         const vdom$ : Stream<VNode> = path$
             .map(paths =>
-                <svg
-                    viewBox='0 0 2000 400'
-                    preserveAspectRatio='xMinYMin slice'
-                    class-graph={ true }
-                >
-                    { paths }
-                </svg>
+                return svg({
+                    attrs: {
+                        viewBox: '0 0 2000 400',
+                        preserveAspectRatio: 'xMinYMin slice',
+                    },
+                    class: {
+                        graph: true
+                    },
+                    key: info.heading
+                }, paths);
             );
 
         return {
