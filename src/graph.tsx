@@ -4,8 +4,11 @@ import sampleCombine from 'xstream/extra/sampleCombine';
 import { scaleTime, scaleLinear, ScaleLinear, ScaleTime } from 'd3-scale';
 import { line, Line } from 'd3-shape';
 import { VNode, svg, h } from '@cycle/dom';
+import { createAxisGenerator } from 'd3-axis-hyperscript';
 
 import { Sources, Sinks, State, Component, WebsocketData } from './interfaces';
+
+const axisGenerator : any = createAxisGenerator(h);
 
 export interface GraphInfo {
     heading : string;
@@ -69,6 +72,13 @@ export function createGraph(info : GraphInfo) : Component
                 }, []);
             }));
 
+        const axis$ : Stream<VNode> = scale$
+            .map(scales => {
+                return axisGenerator
+                    .axisLeft(scales.y)
+                    .ticks(10);
+            });
+
         const group$ : Stream<VNode> = Time.animationFrames()
             .mapTo(undefined)
             .compose(sampleCombine(scale$, path$))
@@ -82,7 +92,8 @@ export function createGraph(info : GraphInfo) : Component
             });
 
         const vdom$ : Stream<VNode> = group$
-            .map(g => {
+            .compose(sampleCombine(axis$))
+            .map(([g, axis]) => {
                 return svg({
                     attrs: {
                         viewBox: '0 0 2000 400',
@@ -102,13 +113,14 @@ export function createGraph(info : GraphInfo) : Component
                     }),
                     h('text', {
                         attrs: {
-                            class: 'heading'
+                            class: 'heading',
                             x: 40,
                             y: 25
                         }
                     }, [
                         info.heading 
-                    ])
+                    ]),
+                    axis
                 ]);
             });
 
@@ -146,4 +158,9 @@ function secondsAgo(count : number) : Date
     return new Date(
         new Date().getTime() - 1000 * count
     );
+}
+
+function flip<T, U>(tuple : [T, U]) : [U, T]
+{
+    return [tuple[1], tuple[0]];
 }

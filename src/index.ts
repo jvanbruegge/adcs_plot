@@ -14,7 +14,7 @@ const url : string = module.hot ? '192.168.0.4' :
 
 const main : Component = addState(App);
 
-const maxLength : number = 2000;
+const maxLength : number = 1000;
 
 const drivers : any = {
     DOM: makeDOMDriver('#app'),
@@ -58,9 +58,14 @@ function foldData(acc : State, curr : WebsocketData) : State
         ] as [number, number];
     });
     const values : [Date, number][][] = acc.values.map((data, i) => [flatData[i], ...data]);
+
+    if(values.length > maxLength) {
+        values.splice(maxLength - 1, values.length - maxLength);
+    }
+
     return {
-        domains: domains.length > maxLength ? domains.slice(0, maxLength) : domains,
-        values: values.length > maxLength ? values.slice(0, maxLength) : values
+        domains: domains,
+        values: values
     };
 }
 
