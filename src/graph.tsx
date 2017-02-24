@@ -40,7 +40,7 @@ export function createGraph(info : GraphInfo) : Component
             .map(([_, s]) => s)
             .map(s => ({
                 x: scaleTime()
-                    .domain([secondsAgo(1), hoursAgo(0.1)])
+                    .domain([secondsAgo(2), hoursAgo(0.04)])
                     .range([0, 2000]),
                 y: scaleLinear()
                     .domain(getDomain(s.domains, info.dataIndex))
@@ -69,8 +69,20 @@ export function createGraph(info : GraphInfo) : Component
                 }, []);
             }));
 
-        const vdom$ : Stream<VNode> = path$
-            .map(paths => {
+        const group$ : Stream<VNode> = Time.animationFrames()
+            .mapTo(undefined)
+            .compose(sampleCombine(scale$, path$))
+            .map(([_, scales, paths]) => [scales.x(new Date) + 15, paths])
+            .map(([v, paths]) => {
+                return svg.g({
+                    attrs: {
+                        transform: 'translate(' + (-v) + ', 0)',
+                    }
+                }, paths);
+            });
+
+        const vdom$ : Stream<VNode> = group$
+            .map(g => {
                 return svg({
                     attrs: {
                         viewBox: '0 0 2000 400',
@@ -80,7 +92,7 @@ export function createGraph(info : GraphInfo) : Component
                         graph: true
                     },
                     key: info.heading
-                }, paths);
+                }, [g]);
             });
 
         return {
