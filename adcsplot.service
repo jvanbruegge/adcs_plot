@@ -1,0 +1,10 @@
+[Unit]
+Description=The ADCS plotting tool
+
+[Service]
+ExecStart=/root/adcs_plot/run.sh
+Restart=always
+WorkingDirectory=/root/adcs_plot
+
+[Install]
+WantedBy=multi-user.target
