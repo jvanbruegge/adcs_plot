@@ -3,6 +3,8 @@ import { VNode } from '@cycle/dom';
 import { DOMSource } from '@cycle/dom/xstream-typings';
 import { HTTPSource, RequestOptions } from '@cycle/http';
 
+declare var module : any;
+
 export interface Sources
 {
     DOM : DOMSource;

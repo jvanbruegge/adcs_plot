@@ -9,10 +9,12 @@ import { Component, WebsocketData, Sources, Sinks, State } from './interfaces';
 
 import { App } from './app';
 
-const url : string = window.location.href.split('/')[2].split(':')[0];
-console.log(url);
+const url : string = module.hot ? '192.168.0.4' :
+    window.location.href.split('/')[2].split(':')[0];
 
 const main : Component = addState(App);
+
+const maxLength : number = 2000;
 
 const drivers : any = {
     DOM: makeDOMDriver('#app'),
@@ -57,8 +59,8 @@ function foldData(acc : State, curr : WebsocketData) : State
     });
     const values : [Date, number][][] = acc.values.map((data, i) => [flatData[i], ...data]);
     return {
-        domains: domains,
-        values: values
+        domains: domains.length > maxLength ? domains.slice(0, maxLength) : domains,
+        values: values.length > maxLength ? values.slice(0, maxLength) : values
     };
 }
 

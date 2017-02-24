@@ -40,7 +40,7 @@ export function createGraph(info : GraphInfo) : Component
             .map(([_, s]) => s)
             .map(s => ({
                 x: scaleTime()
-                    .domain([secondsAgo(2), hoursAgo(0.04)])
+                    .domain([secondsAgo(3), hoursAgo(0.04)])
                     .range([0, 2000]),
                 y: scaleLinear()
                     .domain(getDomain(s.domains, info.dataIndex))
@@ -92,7 +92,15 @@ export function createGraph(info : GraphInfo) : Component
                         graph: true
                     },
                     key: info.heading
-                }, [g]);
+                }, [
+                    g,
+                    svg.polygon({
+                        attrs: {
+                            class: 'rect',
+                            points: '0,0 0,400 40,400 40,0'
+                        }
+                    })
+                ]);
             });
 
         return {
