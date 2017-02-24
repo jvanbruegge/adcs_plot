@@ -16,6 +16,7 @@
     "cyclejs-utils": "^1.0.3",
     "d3-scale": "^1.0.4",
     "d3-shape": "^1.0.4",
+    "express": "^4.14.1",
     "node-static": "^0.7.9",
     "nodejs-websocket": "^1.7.1",
     "xstream": "^10.2.0"

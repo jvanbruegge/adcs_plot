@@ -1,5 +1,13 @@
 const ws = require('nodejs-websocket');
 
+const express = require('express');
+const app = express();
+
+app.use(express.static('build'));
+app.listen(4000, () => {
+    console.log('server runs on port 4000, websocket on 4001');
+});
+
 process.stdin.resume();
 process.stdin.setEncoding('utf8');
 
@@ -12,7 +20,7 @@ const server = ws.createServer(function(conn){
     conn.on('close', function() {
         kickUser(conn);
     });
-}).listen(4000);
+}).listen(4001);
 
 process.stdin.on('data', function(chunk) {
     connections.forEach(function(conn) {
