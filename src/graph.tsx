@@ -3,7 +3,7 @@ import xs, { Stream } from 'xstream';
 import sampleCombine from 'xstream/extra/sampleCombine';
 import { scaleTime, scaleLinear, ScaleLinear, ScaleTime } from 'd3-scale';
 import { line, Line } from 'd3-shape';
-import { VNode, svg } from '@cycle/dom';
+import { VNode, svg, h } from '@cycle/dom';
 
 import { Sources, Sinks, State, Component, WebsocketData } from './interfaces';
 
@@ -44,7 +44,7 @@ export function createGraph(info : GraphInfo) : Component
                     .range([0, 2000]),
                 y: scaleLinear()
                     .domain(getDomain(s.domains, info.dataIndex))
-                    .range([0, 400]),
+                    .range([40, 400]),
                 state: s
             }));
 
@@ -99,7 +99,16 @@ export function createGraph(info : GraphInfo) : Component
                             class: 'rect',
                             points: '0,0 0,400 40,400 40,0'
                         }
-                    })
+                    }),
+                    h('text', {
+                        attrs: {
+                            class: 'heading'
+                            x: 40,
+                            y: 25
+                        }
+                    }, [
+                        info.heading 
+                    ])
                 ]);
             });
 
