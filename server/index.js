@@ -8,9 +8,6 @@ app.listen(4000, () => {
     console.log('server runs on port 4000, websocket on 4001');
 });
 
-process.stdin.resume();
-process.stdin.setEncoding('utf8');
-
 var connections = [];
 
 const server = ws.createServer(function(conn){
@@ -22,74 +19,62 @@ const server = ws.createServer(function(conn){
     });
 }).listen(4001);
 
-process.stdin.on('data', function(chunk) {
+setInterval(() => {
+    const chunk = generateChunk();
     connections.forEach(function(conn) {
         try {
-            conn.sendText(JSON.stringify(parseChunk(chunk)));
+            conn.sendText(JSON.stringify(chunk));
         } catch(e) {
             kickUser(conn);
         }
     });
-});
-
-process.stdin.on('end', function() {
-    console.log('input ended')
-});
+}, 333); //Update with 3Hz
 
 function kickUser(conn) {
     console.log('Removed connection');
     connections.splice(connections.indexOf(conn), 1);
 }
 
-var start = 7;
-
-function parseChunk(chunk) {
-    const res = {
+function generateChunk() {
+    return {
         time: new Date(),
         accel: {
-            x: readValue('ay=', chunk),
-            y: readValue('az=', chunk),
-            z: readValue('gx=', chunk),
+            x: Math.random(),
+            y: Math.random(),
+            z: Math.random()
         },
         gyro: {
-            x: readValue('gy=', chunk),
-            y: readValue('gz=', chunk),
-            z: readValue('mx=', chunk),
+            x: Math.random(),
+            y: Math.random(),
+            z: Math.random()
         },
         magVector: {
-            x: readValue('my=', chunk),
-            y: readValue('mz=', chunk),
-            z: readValue('sx=', chunk),
+            x: Math.random(),
+            y: Math.random(),
+            z: Math.random()
         },
         sunVector: {
-            x: readValue('sy=', chunk),
-            y: readValue('sz=', chunk),
-            z: readValue('tbmx=', chunk),
+            x: Math.random(),
+            y: Math.random(),
+            z: Math.random()
         },
         temp: {
-            bmx: readValue('t1=', chunk, 5),
-            t1: readValue('t2=', chunk),
-            t2: readValue('t3=', chunk),
-            t3: readValue('mrx=', chunk),
+            bmx: Math.random(),
+            t1: Math.random(),
+            t2: Math.random(),
+            t3: Math.random()
         },
         magRaw: {
-            x: readValue('mry=', chunk, 4),
-            y: readValue('mrz=', chunk, 4),
-            z: readValue('mrr=', chunk, 4),
-            r: readValue('sv0=', chunk, 4),
+            x: Math.random(),
+            y: Math.random(),
+            z: Math.random(),
+            r: Math.random()
         },
         sunRaw: {
-            pad0: readValue('sv1=', chunk, 4),
-            pad1: readValue('sv2=', chunk, 4),
-            pad2: readValue('sv3=', chunk, 4),
-            pad3: parseFloat(chunk.substring(start + 4, chunk.length).trim())
+            pad0: Math.random(),
+            pad1: Math.random(),
+            pad2: Math.random(),
+            pad3: Math.random()
         }
     };
-    start = 2;
-    return res;
-}
-
-function readValue(end, chunk, additional) {
-    additional = additional || 3;
-    return parseFloat(chunk.substring(start + additional, (start = chunk.indexOf(end)) - 1));
 }
