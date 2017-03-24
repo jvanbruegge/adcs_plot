@@ -117,9 +117,7 @@ export function createGraph(info : GraphInfo) : Component
                             x: 40,
                             y: 25
                         }
-                    }, [
-                        info.heading 
-                    ]),
+                    }, info.heading),
                     axis
                 ]);
             });

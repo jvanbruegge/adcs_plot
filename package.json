@@ -3,24 +3,24 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
-    "@types/d3-scale": "^1.0.6",
-    "@types/d3-shape": "^1.0.7",
-    "cycle-scripts-one-fits-all": "1.0.4"
+    "@types/d3-scale": "^1.0.7",
+    "@types/d3-shape": "^1.0.9",
+    "cycle-scripts-one-fits-all": "1.1.0"
   },
   "dependencies": {
-    "@cycle/dom": "^14.3.0",
-    "@cycle/http": "^11.3.0",
-    "@cycle/isolate": "^1.4.0",
-    "@cycle/time": "^0.7.1",
-    "@cycle/xstream-run": "^4.2.0",
+    "@cycle/dom": "^16.0.0",
+    "@cycle/http": "^13.2.0",
+    "@cycle/isolate": "^2.1.0",
+    "@cycle/run": "^3.0.0",
+    "@cycle/time": "^0.7.3",
     "cyclejs-utils": "^1.0.3",
     "d3-axis-hyperscript": "0.0.1",
-    "d3-scale": "^1.0.4",
-    "d3-shape": "^1.0.4",
-    "express": "^4.14.1",
+    "d3-scale": "^1.0.5",
+    "d3-shape": "^1.0.6",
+    "express": "^4.15.2",
     "node-static": "^0.7.9",
     "nodejs-websocket": "^1.7.1",
-    "xstream": "^10.2.0"
+    "xstream": "^10.3.0"
   },
   "scripts": {
     "start": "cycle-scripts start",
@@ -32,18 +32,23 @@
   "babel": {
     "presets": [
       [
-        "es2015",
+        "env",
         {
-          "modules": false
+          "modules": false,
+          "targets": {
+            "browsers": [
+              "last 2 versions"
+            ]
+          },
+          "useBuiltIns": true
         }
       ]
     ],
     "plugins": [
-      "syntax-jsx",
       [
         "transform-react-jsx",
         {
-          "pragma": "snabb.html"
+          "pragma": "Snabbdom.createElement"
         }
       ]
     ]

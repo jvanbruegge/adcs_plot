@@ -1,12 +1,10 @@
 import { Stream } from 'xstream';
-import { VNode } from '@cycle/dom';
-import { DOMSource } from '@cycle/dom/xstream-typings';
+import { DOMSource, VNode } from '@cycle/dom';
 import { HTTPSource, RequestOptions } from '@cycle/http';
 
 declare var module : any;
 
-export interface Sources
-{
+export type Sources = {
     DOM : DOMSource;
     HTTP : HTTPSource;
     websocket : Stream<WebsocketData>;
@@ -14,8 +12,7 @@ export interface Sources
     Time : any;
 }
 
-export interface Sinks
-{
+export type Sinks = {
     DOM? : Stream<VNode>;
     HTTP? : Stream<RequestOptions>;
     state? : Stream<WebsocketData>;

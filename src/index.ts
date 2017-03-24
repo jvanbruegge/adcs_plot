@@ -1,5 +1,5 @@
 import xs, { Stream } from 'xstream';
-import { run } from '@cycle/xstream-run';
+import { run } from '@cycle/run';
 import { makeDOMDriver } from '@cycle/dom';
 import { makeHTTPDriver } from '@cycle/http';
 import { timeDriver } from '@cycle/time';
@@ -9,8 +9,7 @@ import { Component, WebsocketData, Sources, Sinks, State } from './interfaces';
 
 import { App } from './app';
 
-const url : string = module.hot ? '192.168.0.4' :
-    window.location.href.split('/')[2].split(':')[0];
+const url : string = window.location.href.split('/')[2].split(':')[0];
 
 const main : Component = addState(App);
 
