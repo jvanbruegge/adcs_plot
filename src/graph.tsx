@@ -1,4 +1,3 @@
-/** @jsx snabb.svg */
 import xs, { Stream } from 'xstream';
 import sampleCombine from 'xstream/extra/sampleCombine';
 import { scaleTime, scaleLinear, ScaleLinear, ScaleTime } from 'd3-scale';

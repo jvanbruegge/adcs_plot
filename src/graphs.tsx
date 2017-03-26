@@ -1,5 +1,5 @@
 import xs, { Stream } from 'xstream';
-import { VNode } from '@cycle/dom';
+import { VNode, div } from '@cycle/dom';
 import { filterProp, mergeSinks } from 'cyclejs-utils';
 
 import { Sources, Sinks, Component, WebsocketData } from './interfaces';
@@ -58,11 +58,7 @@ export function Graphs(sources : Sources) : Sinks
         tempSinks.DOM,
         magRawSinks.DOM,
         sunRawSinks.DOM
-    ).map(arr =>
-        <div>
-            { arr }
-        </div>
-    );
+    ).map(div);
 
     const sinks : Sinks = filterProp(
         mergeSinks(
