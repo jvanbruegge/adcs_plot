@@ -336,6 +336,22 @@ We currently have seven graphs. They do not fit all on your screen. So we could 
 
 This way we have only between three and four graphs active at any time (plus/minus one depending on screen size) so we cut about half of our rendering time!
 
+## Step 10: UI/UX goodies
+
+As with the previous point these are ideas for the future, I might implement some of them.
+
+### Proper scales
+
+The scales on the y axis you can see in the current version are generated using [d3-axis-hyperscript](https://github.com/jvanbruegge/d3-axis-hyperscript), a library that was hacked together by me in an hour. That's why it is not working very well and I would not trust the axis too much. I basicly took the idea from [d3-axis](https://github.com/d3/d3-axis) and made it work without direct DOM manipulation, but with normal snabbdom vnodes instead.
+
+We could add something like helper lines to make graphs clearer and achieve API compatibility with `d3-axis`. And fix the remaining bugs of course. If someone is interested, PRs are welcome :)
+
+### Resorting the graphs
+
+As we can only see a certain number of graphs on the stream at a time, it would be very nice if we could reorder them. That way we can bring the graphs we are interested in closer or near each other allowing you to see them at the same time.
+
+This is fairly simple to achive. I created [cyclejs-sortable](https://github.com/cyclejs-community/cyclejs-sortable) that fits exactly this use case (shameless plug, again). With this we can just add a font awesome symbol to each graph that we can use as handle. We can then use this handle to reorder the graphs with drag and drop.
+
 ## Closing it up
 
 All source code is on [GitHub](https://github.com/jvanbruegge/adcs_plot). This is a copy of the original repo, so you can go back a few commits and see the original history.
