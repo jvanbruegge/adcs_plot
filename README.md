@@ -312,10 +312,34 @@ If you run it now in the browser you see butter smooth plots of the newest data.
 
 ![Smooth](https://i.imgflip.com/1m4mtu.jpg)
 
+## Step 9: Still not enough?
+
+What can we do to increase our performance even more? These are just ideas for the future, I might implement (some) of them.
+
+### Immutable.js
+
+We already use immutable data structures. When the data of the websocket is added to the state we always create new arrays. But this is costly, especially as the arrays get bigger. Here using [Immutable.js](https://facebook.github.io/immutable-js/) can help a lot. Instead of using a normal array, we will use a `List`.
+
+What is the advantage? Consider the structure of a list vs an array:
+```
+     List                     Array
+a -> b -> c -> d           [a, b, c, d]
+```
+When we add a new element to the front (or back depending how you look at it) we just have to create one element that points to the first element of the old list (we run in `O(1)`).
+If we add an element to the array, we have to allocate a new array and copy all elements from the old one to the new one (we run in `O(n)` plus we have `n` new allocations).
+
+This technique is called [structural sharing](https://medium.com/@dtinth/immutable-js-persistent-data-structures-and-structural-sharing-6d163fbd73d2#.i53qyk7b3).
+
+### Pausing unused graphs
+
+We currently have seven graphs. They do not fit all on your screen. So we could use a periodic check or a check on scroll if the graph is even visible. If not we can pause the whole rendering process. We could make use of jQuery's `:visible` pseudo selector. The source code fo this jQuery magic is [here](https://github.com/jquery/jquery/blob/master/src/css/hiddenVisibleSelectors.js).
+
+This way we have only between three and four graphs active at any time (plus/minus one depending on screen size) so we cut about half of our rendering time!
+
 ## Closing it up
 
 All source code is on [GitHub](https://github.com/jvanbruegge/adcs_plot). This is a copy of the original repo, so you can go back a few commits and see the original history.
 
-For the purpose of this article, I updated the repo to use the newest Cycle.js version - [Cycle.js Unified](https://github.com/cyclejs/cyclejs/releases/tag/unified-tag) and I remoted the dependencies on other programs we use to get the data off our satellite hardware. The current master generates random values to the client. You can see all changes [here](https://github.com/jvanbruegge/adcs_plot/commit/02060fdaad53f6a3f15170707f37b4c4061162c5).
+For the purpose of this article, I updated the repo to use the newest Cycle.js version - [Cycle.js Unified](https://github.com/cyclejs/cyclejs/releases/tag/unified-tag) - and I removed the dependencies on other programs we use to get the data off our satellite hardware. The current master generates random values and sends them to the client. You can see all changes [here](https://github.com/jvanbruegge/adcs_plot/commit/02060fdaad53f6a3f15170707f37b4c4061162c5).
 
-Thank you for reading 'till the end and hopefully we will meet at [Cycleconf](http://cycleconf.com/) where I will be holding a [talk](http://cycleconf.com/#speakers).
+Thank you for reading 'till the end and hopefully we will meet at [Cycleconf](http://cycleconf.com/) where I will be holding a [talk about property based testing](http://cycleconf.com/#speakers).
