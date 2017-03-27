@@ -159,10 +159,8 @@ const scaledData$ : Stream<DataPoint[][]> = xs.combine(scale$, state)
         return info.dataFilter(data).map(y => [x, y] as DataPoint);
     }));
 ```
-<!---
-I do not understand what you are trying to say here. Rewrite the following long sentence to be less convoluted. Maybe split it.
----->
-Let's analyze what it does. Every time we get new data from the server (which is 3 times a second at default) we run this part, because every time it gets added to the state and `combine` emits every time of the given streams emits. I will visualize the process:
+
+Let's take a closer look on our data processing. I have outlined the whole process below:
 
 New data comes from the server:
 ```
