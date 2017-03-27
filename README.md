@@ -1,18 +1,18 @@
 # Using Cycle.js to view real-time satellite test data
 
-This article assumes you are familiar with [Cycle.js](https://github.com/cyclejs/cyclejs). If not this is propably fine if you know reactive streams like RxJS, otherwhile check out the excellent [documentation](https://cycle.js.org/dialogue.html#dialogue-abstraction) first.
+This article assumes you are familiar with [Cycle.js](https://github.com/cyclejs/cyclejs). If not this is probably fine if you know reactive streams like RxJS, otherwise check out the excellent [documentation](https://cycle.js.org/dialogue.html#dialogue-abstraction) first.
 
 ## The goal
 
-I currently work on the [MOVE-II](http://www.move2space.de/MOVE-II/) CubeSat, more specificly I work on the ADCS - the Attitude Determination and Control System. This means we have a small satellite packed with various sensors like magnetometers, gyroscopes and sun sensors. Those sensors are used to drive the control algorithms that drive our coils to actuate our satellite.
+I currently work on the [MOVE-II](http://www.move2space.de/MOVE-II/) CubeSat, more specifically I work on the ADCS - the Attitude Determination and Control System. This means we have a small satellite packed with various sensors like magnetometers, gyroscopes and sun sensors. Those sensors are used to drive the control algorithms that drive our coils to actuate our satellite.
 
-For tests we mount our ADCS PCBs to a 3D printed structure and hook them up to a BeagleBone Black Wireless - a small computer like the Raspberry PI - which emulates our main computer (the CDH system). We then suspend the satellite inside a Helmholz cage where we can provide an arbitrary magnet field that should simulate the earth's magent field. We then use the SPI connection of the BeagleBone to poll the sensor and control data from our hardware.
+For tests we mount our ADCS PCBs to a 3D printed structure and hook them up to a BeagleBone Black Wireless - a small computer like the Raspberry PI - which emulates our main computer (the CDH system). We then suspend the satellite inside a Helmholz cage where we can provide an arbitrary magnet field that should simulate the earth's magnet field. We then use the SPI connection of the BeagleBone to poll the sensor and control data from our hardware.
 
 My goal is now to create an app that can be used to display the live data of our satellite while we are running the tests.
 
 ## Step 1: Evaluation
 
-Why use Cycle.js? I have multiple reasons. For once I work daily with Cycle.js and simply enjoy the concept and the readability of the framework. But the main reason is that Cycle.js excels at modeling complex, time based async behavior, which we are going to exploit.
+Why use Cycle.js? I have multiple reasons. For once I work daily with Cycle.js and simply enjoy the concept and the readability of the framework. But the main reason is that Cycle.js excels at modelling complex, time based asynchronous behavior, which we are going to exploit.
 
 The other piece I need for the project is the plotting of the data. For this task we will use the amazing [d3.js library](https://d3js.org/), because - as you will see later - it is a really good fit and addition to Cycle.js.
 
@@ -58,7 +58,7 @@ export function makeWebsocketDriver(url : string) : () => Stream<WebsocketData>
 ```
 As we are only _getting_ data from the server and not _setting_ data, we just wrap the `onmessage` function in a new Stream.
 
-The graphs file is just passing some settings to the graph file, we tell the name of the graph, the axis label, the domain of the incoming data (here we expect data between 0 and 100 degrees Celcius) and a filter, so we can extract the data relevant for this graph from the global state object.
+The graphs file is just passing some settings to the graph file, we tell the name of the graph, the axis label, the domain of the incoming data (here we expect data between 0 and 100 degrees Celsius) and a filter, so we can extract the data relevant for this graph from the global state object.
 ```typescript
 import { Stream } from 'xstream';
 
@@ -108,9 +108,9 @@ const scale$ : Stream<Scales> = xs.of({
         .range([0, 500])
 });
 ```
-Here is the first part that needs actual explanation. The code you see here is using d3's scales. With d3 version 4, the whole library was splitted in smaller submodules like `d3-path`, `d3-shape` or `d3-scale` which we used here. This has the great advantage that the calculations and the DOM manipulation is now clearly seperated. As Cycle.js uses virtual dom diffing under the hood we don't want external DOM manipulations.
+Here is the first part that needs actual explanation. The code you see here is using d3's scales. With d3 version 4, the whole library was split in smaller submodules like `d3-path`, `d3-shape` or `d3-scale` which we used here. This has the great advantage that the calculations and the DOM manipulation is now clearly separated. As Cycle.js uses virtual DOM diffing under the hood we don't want external DOM manipulations.
 
-A scale is just a normal javascript function that takes some data and returns only the scaled data and does nothing else (pure functions - yay!). To initialize the function we use the `.domain()` and the `.range()` functions. The domain is the expected range of **incoming** data, the range contains the **outgoing** pixel values.
+A scale is just a normal Javascript function that takes some data and returns only the scaled data and does nothing else (pure functions - yay!). To initialize the function we use the `.domain()` and the `.range()` functions. The domain is the expected range of **incoming** data, the range contains the **outgoing** pixel values.
 
 This means here we are creating two scales, one for the x axis and one for the y axis. The x axis is using a time scale because we want our data to be associated with the timestamp it was generated. The leftmost value on the graph should be the current time, the rightmost value should be two hours ago. We want those values to be mapped to a 500 pixel wide graph. The y axis is analog to the x axis, the only difference is passing the domain from the settings.
 
@@ -143,11 +143,11 @@ const vdom$ : Stream<VNode> = path$
         </svg>
     );
 ```
-We `map` the array of path elements to be embedded in an svg element. If you are wondering what the HTML is doing in the Typescript file, this is JSX syntax that was made popular by [React](https://facebook.github.io/react/). You can learn more about JSX [here](https://facebook.github.io/react/docs/jsx-in-depth.html).
+We `map` the array of path elements to be embedded in an SVG element. If you are wondering what the HTML is doing in the Typescript file, this is JSX syntax that was made popular by [React](https://facebook.github.io/react/). You can learn more about JSX [here](https://facebook.github.io/react/docs/jsx-in-depth.html).
 
 ## Step 4: Enjoy! ...Or do we?
 
-If you run the code now, you will notice that the performance is not great. And with not great I mean horrible. After the inital few data points the browser gets slower and slower and won't respond at all in the end.
+If you run the code now, you will notice that the performance is not great. And with not great I mean horrible. After the initial few data points the browser gets slower and slower and won't respond at all in the end.
 
 ## Step 5: Making it better
 
@@ -160,7 +160,7 @@ const scaledData$ : Stream<DataPoint[][]> = xs.combine(scale$, state)
     }));
 ```
 
-Let's analyse what it does. Every time we get new data from the server (which is 3 times a second at default) we run this part, because every time it gets added to the state and `combine` emits every time of the given streams emits. I will visualize the process:
+Let's take a closer look on our data processing. I have outlined the whole process below:
 
 New data comes from the server:
 ```
@@ -229,7 +229,7 @@ function flattenData(data : WebsocketData) : number[]
 
 What does the new code really do? First we flatten the incoming data, remember, we will still get the data slices from the server. The `flattenData` function just arranges the data in a flat array. We then add the current time to every data point, just for convenience. Finally we simply add the new values to the correct arrays one by one.
 
-To access the data now we don't use a `dataFilter` any more but instead just the indices of the array. For clearness I could (should?) have used an object as result of `flattenData` but the array will do just fine:
+To access the data now we don't use a `dataFilter` anymore but instead just the indices of the array. For clearness I could (should?) have used an object as result of `flattenData` but the array will do just fine:
 ```typescript
 const accelSinks : Sinks = createGraph({
         heading: 'Accelerometer',
@@ -257,13 +257,13 @@ const path$ : Stream<VNode[]> = scaledData$
     }));
 ```
 
-Every time we get new data (again, three times a second) we are changing the `d` attribute of the path element. This forces the browser to recalculate the layout of the element, it's positon, coloring and a bunch of other stuff. Take that times the number of lines we have (21 in our case) and the reason why our renderer - and finally the browser - falls to its knees is clear.
+Every time we get new data (again, three times a second) we are changing the `d` attribute of the path element. This forces the browser to recalculate the layout of the element, its positon, coloring and a bunch of other stuff. Take that times the number of lines we have (21 in our case) and the reason why our renderer - and finally the browser - falls to its knees is clear.
 
-But what can be do about it? I dont want less updates, because then the graph would be jerking too. Does that mean I have to live with that? But other people can make it work too!
+But what can be do about it? I don't want less updates, because then the graph would be jerking too. Does that mean I have to live with that? But other people can make it work too!
 
 Let's make a [new version](https://github.com/jvanbruegge/adcs_plot/tree/e98723dbb4affc674d43fe7b3eed7a5cidfbf0b60c).
 
-This requires a trick. We will still update the state as soon new data has arrived from the websocket. But we will only rerender the DOM in a fixed interval. Let's start with half a second. Because we will now use time based operators we will pull in `@cycle/time` that provides us with the [necessary methods](https://github.com/cyclejs/time#api).
+This requires a trick. We will still update the state as soon new data has arrived from the websocket. But we will only re-render the DOM in a fixed interval. Let's start with half a second. Because we will now use time based operators we will pull in `@cycle/time` that provides us with the [necessary methods](https://github.com/cyclejs/time#api).
 ```typescript
 const updateDOM$ : Stream<undefined> = Time.periodic(500)
     .mapTo(undefined);
@@ -287,9 +287,9 @@ const scaledData$ : Stream<DataPoint[][]> = scale$
         return arr.map(data => data.map(d => [scales.x(d[0]), scales.y(d[1])] as [number, number]));
     });
 ```
-So far so easy. But why are we setting the leftmost value to a time in the past? Why not to the newest date any more? That way the newest data will be hidden!
+So far so easy. But why are we setting the leftmost value to a time in the past? Why not to the newest date anymore? That way the newest data will be hidden!
 
-This has a simple reason while we can't **rerender** the whole graph, we can **move** it. Every svg element accepts an attribute named `transform`. With this attribute we can rotate, scale or **translate** - move - the element. As this is using GPU acceleration we can do it as often as we want!
+This has a simple reason while we can't **rerender** the whole graph, we can **move** it. Every SVG element accepts an attribute named `transform`. With this attribute we can rotate, scale or **translate** - move - the element. As this is using GPU acceleration we can do it as often as we want!
 ```typescript
 const group$ : Stream<VNode> = Time.animationFrames()
     .mapTo(undefined)
@@ -332,7 +332,7 @@ This technique is called [structural sharing](https://medium.com/@dtinth/immutab
 
 ### Pausing unused graphs
 
-We currently have seven graphs. They do not fit all on your screen. So we could use a periodic check or a check on scroll if the graph is even visible. If not we can pause the whole rendering process. We could make use of jQuery's `:visible` pseudo selector. The source code fo this jQuery magic is [here](https://github.com/jquery/jquery/blob/master/src/css/hiddenVisibleSelectors.js).
+We currently have seven graphs. They do not fit all on your screen. So we could use a periodic check or a check on scroll if the graph is even visible. If not we can pause the whole rendering process. We could make use of jQuery's `:visible` pseudo selector. The source code for this jQuery magic is [here](https://github.com/jquery/jquery/blob/master/src/css/hiddenVisibleSelectors.js).
 
 This way we have only between three and four graphs active at any time (plus/minus one depending on screen size) so we cut about half of our rendering time!
 
@@ -342,7 +342,7 @@ As with the previous point these are ideas for the future, I might implement som
 
 ### Proper scales
 
-The scales on the y axis you can see in the current version are generated using [d3-axis-hyperscript](https://github.com/jvanbruegge/d3-axis-hyperscript), a library that was hacked together by me in an hour. That's why it is not working very well and I would not trust the axis too much. I basicly took the idea from [d3-axis](https://github.com/d3/d3-axis) and made it work without direct DOM manipulation, but with normal snabbdom vnodes instead.
+The scales on the y axis you can see in the current version are generated using [d3-axis-hyperscript](https://github.com/jvanbruegge/d3-axis-hyperscript), a library that was hacked together by me in an hour. That's why it is not working very well and I would not trust the axis too much. I basically took the idea from [d3-axis](https://github.com/d3/d3-axis) and made it work without direct DOM manipulation, but with normal snabbdom vnodes instead.
 
 We could add something like helper lines to make graphs clearer and achieve API compatibility with `d3-axis`. And fix the remaining bugs of course. If someone is interested, PRs are welcome :)
 
@@ -350,7 +350,7 @@ We could add something like helper lines to make graphs clearer and achieve API 
 
 As we can only see a certain number of graphs on the stream at a time, it would be very nice if we could reorder them. That way we can bring the graphs we are interested in closer or near each other allowing you to see them at the same time.
 
-This is fairly simple to achive. I created [cyclejs-sortable](https://github.com/cyclejs-community/cyclejs-sortable) that fits exactly this use case (shameless plug, again). With this we can just add a font awesome symbol to each graph that we can use as handle. We can then use this handle to reorder the graphs with drag and drop.
+This is fairly simple to achieve. I created [cyclejs-sortable](https://github.com/cyclejs-community/cyclejs-sortable) that fits exactly this use case (shameless plug, again). With this we can just add a font awesome symbol to each graph that we can use as handle. We can then use this handle to reorder the graphs with drag and drop.
 
 ## Closing it up
 
