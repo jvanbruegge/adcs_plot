@@ -199,7 +199,7 @@ That is a lot of allocations for the Javascript engine. You can see this also wh
 
 So how can we make this better? We write a [new version](https://github.com/jvanbruegge/adcs_plot/tree/1b8f124b2fc1cad86afb104ad54cb9a2de5b4004).
 
-Let's ask a simple question. Why are we storing our state as array of data slices? If every line of every graph needs an array of data **values**, why not store them as such?
+Let's ask a simple question. Why are we storing our state as array of data **slices**? If every line of every graph needs an array of data **values**, why not store them as such?
 
 ```typescript
 function foldData(acc : State, curr : WebsocketData) : State
