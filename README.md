@@ -6,13 +6,13 @@ This article assumes you are familiar with [Cycle.js](https://github.com/cyclejs
 
 I currently work on the [MOVE-II](http://www.move2space.de/MOVE-II/) CubeSat, more specifically I work on the ADCS - the Attitude Determination and Control System. This means we have a small satellite packed with various sensors like magnetometers, gyroscopes and sun sensors. Those sensors are used to drive the control algorithms that drive our coils to actuate our satellite.
 
-For tests we mount our ADCS PCBs to a 3D printed structure and hook them up to a BeagleBone Black Wireless - a small computer like the Raspberry PI - which emulates our main computer (the CDH system). We then suspend the satellite inside a Helmholz cage where we can provide an arbitrary magnet field that should simulate the earth's magnet field. We then use the SPI connection of the BeagleBone to poll the sensor and control data from our hardware.
+For tests we mount our ADCS PCBs to a 3D printed structure and hook them up to a BeagleBone Black Wireless - a small computer like the Raspberry PI - which emulates our main computer (the CDH system). We then suspend the satellite inside a Helmholz cage where we can provide an arbitrary magnet field that should simulate the earth's magnetic field. We then use the SPI connection of the BeagleBone to poll the sensor and control data from our hardware.
 
 My goal is now to create an app that can be used to display the live data of our satellite while we are running the tests.
 
 ## Step 1: Evaluation
 
-Why use Cycle.js? I have multiple reasons. For once I work daily with Cycle.js and simply enjoy the concept and the readability of the framework. But the main reason is that Cycle.js excels at modelling complex, time based asynchronous behavior, which we are going to exploit.
+Why use Cycle.js? I have multiple reasons. For one I work daily with Cycle.js and simply enjoy the concept and the readability of the framework. But the main reason is that Cycle.js excels at modelling complex, time based asynchronous behavior, which we are going to exploit.
 
 The other piece I need for the project is the plotting of the data. For this task we will use the amazing [d3.js library](https://d3js.org/), because - as you will see later - it is a really good fit and addition to Cycle.js.
 
@@ -20,7 +20,7 @@ For the transmission of the real-time data we will use normal websockets wrapped
 
 ## Step 2: Let's begin
 
-So the first step is to scaffold a new boilerplate. Luckily thanks to [create-cycle-app](https://github.com/cyclejs-community/create-cycle-app) this is quite easy. I also want use typescript so we'll use the `one-fits-all` flavor (shameless plug).
+So the first step is to scaffold a new boilerplate. Luckily thanks to [create-cycle-app](https://github.com/cyclejs-community/create-cycle-app) this is quite easy. I also want to use typescript so we'll use the `one-fits-all` flavor (shameless plug).
 
 ```
 create-cycle-app adcs_plot --flavor cycle-scripts-one-fits-all
@@ -108,7 +108,7 @@ const scale$ : Stream<Scales> = xs.of({
         .range([0, 500])
 });
 ```
-Here is the first part that needs actual explanation. The code you see here is using d3's scales. With d3 version 4, the whole library was split in smaller submodules like `d3-path`, `d3-shape` or `d3-scale` which we used here. This has the great advantage that the calculations and the DOM manipulation is now clearly separated. As Cycle.js uses virtual DOM diffing under the hood we don't want external DOM manipulations.
+Here is the first part that needs actual explanation. The code you see here is using d3's scales. With d3 version 4, the whole library was split into smaller submodules like `d3-path`, `d3-shape` or `d3-scale` which we used here. This has the great advantage that the calculations and the DOM manipulation is now clearly separated. As Cycle.js uses virtual DOM diffing under the hood we don't want external DOM manipulations.
 
 A scale is just a normal Javascript function that takes some data and returns only the scaled data and does nothing else (pure functions - yay!). To initialize the function we use the `.domain()` and the `.range()` functions. The domain is the expected range of **incoming** data, the range contains the **outgoing** pixel values.
 
