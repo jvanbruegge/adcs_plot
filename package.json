@@ -5,7 +5,8 @@
   "devDependencies": {
     "@types/d3-scale": "^1.0.7",
     "@types/d3-shape": "^1.0.9",
-    "cycle-scripts-one-fits-all": "1.1.0"
+    "cycle-scripts-one-fits-all": "1.1.0",
+    "webpack": "^2.3.2"
   },
   "dependencies": {
     "@cycle/dom": "^16.0.0",
