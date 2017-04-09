@@ -3,16 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
-    "@types/d3-scale": "^1.0.7",
-    "@types/d3-shape": "^1.0.9",
-    "cycle-scripts-one-fits-all": "1.1.0"
+    "@types/d3-scale": "^1.0.8",
+    "@types/d3-shape": "^1.0.10",
+    "cycle-scripts-one-fits-all": "2.0.0"
   },
   "dependencies": {
-    "@cycle/dom": "^16.0.0",
+    "@cycle/dom": "^17.1.0",
     "@cycle/http": "^13.2.0",
     "@cycle/isolate": "^2.1.0",
-    "@cycle/run": "^3.0.0",
-    "@cycle/time": "^0.7.3",
+    "@cycle/run": "^3.1.0",
+    "@cycle/time": "^0.8.0",
     "cyclejs-utils": "^1.0.3",
     "d3-axis-hyperscript": "0.0.1",
     "d3-scale": "^1.0.5",
@@ -29,7 +29,23 @@
     "eject": "cycle-scripts eject",
     "server": "node server/index.js"
   },
+  "nyc": {
+    "include": [
+      "src"
+    ],
+    "reporter": [
+      "html",
+      "text-summary"
+    ]
+  },
   "babel": {
+    "env": {
+      "test": {
+        "plugins": [
+          "istanbul"
+        ]
+      }
+    },
     "presets": [
       [
         "env",
